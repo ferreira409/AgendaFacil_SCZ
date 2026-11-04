@@ -1,0 +1,251 @@
+/* =========================================================
+   DISEÑO INTERACTIVO — botones flotantes y animaciones
+   (se carga después de estilo.css)
+   ========================================================= */
+
+:root {
+    --sombra-boton: 0 4px 14px rgba(79, 70, 229, 0.25);
+    --sombra-boton-hover: 0 12px 28px rgba(79, 70, 229, 0.35);
+    --transicion: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* efecto "rebote" suave */
+}
+
+/* ---------- BOTONES QUE FLOTAN ---------- */
+.btn {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform var(--transicion), box-shadow 0.25s ease, background 0.25s ease;
+}
+.btn-primario {
+    background: linear-gradient(135deg, #6366f1, var(--primario));
+    box-shadow: var(--sombra-boton);
+}
+.btn-borde  { background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+.btn-blanco { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); }
+
+.btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--sombra-boton-hover);
+}
+.btn-borde:hover  { background: var(--primario-claro); }
+.btn-blanco:hover { box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25); }
+
+.btn:active, .mini:active {
+    transform: translateY(-1px) scale(0.98);
+    transition-duration: 0.08s;
+}
+
+/* Brillo que cruza el botón al pasar el mouse */
+.btn-primario::after {
+    content: "";
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+}
+.btn-primario:hover::after { left: 130%; }
+
+/* Onda al hacer clic (la crea app.js) */
+.onda {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: onda 0.6s ease-out;
+    pointer-events: none;
+}
+.btn-borde .onda { background: rgba(79, 70, 229, 0.2); }
+@keyframes onda { to { transform: scale(4); opacity: 0; } }
+
+/* Mini botones del panel */
+.mini {
+    transition: transform var(--transicion), box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.mini:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12); filter: none; }
+
+/* Horarios */
+.hora-opcion span { transition: transform var(--transicion), box-shadow 0.2s, background 0.2s, color 0.2s; }
+.hora-opcion:hover span { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(79, 70, 229, 0.15); }
+.hora-opcion input:checked + span { box-shadow: var(--sombra-boton); transform: translateY(-2px); }
+
+/* Pestañas y menú del panel */
+.tabs a, .panel-menu a { transition: all 0.2s ease; }
+.panel-menu a:hover { transform: translateX(4px); }
+
+/* Enlaces del navbar con subrayado animado */
+.nav-links > a:not(.btn) { position: relative; }
+.nav-links > a:not(.btn)::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 0; height: 2px;
+    background: var(--primario);
+    border-radius: 2px;
+    transition: width 0.25s ease;
+}
+.nav-links > a:not(.btn):hover::after { width: 100%; }
+
+/* Navbar con sombra al bajar */
+.navbar { transition: box-shadow 0.3s ease; }
+.navbar.con-sombra { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); }
+
+/* ---------- BOTÓN FLOTANTE (FAB) ---------- */
+.fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.45);
+    animation: flotar 3s ease-in-out infinite;
+    transition: transform var(--transicion), box-shadow 0.25s;
+}
+.fab:hover {
+    animation-play-state: paused;
+    transform: translateY(-6px) scale(1.06);
+    box-shadow: 0 16px 40px rgba(99, 102, 241, 0.55);
+}
+.fab::before {           /* pulso alrededor */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 2px solid rgba(99, 102, 241, 0.6);
+    animation: pulso 2.2s ease-out infinite;
+}
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+}
+@keyframes pulso {
+    0%   { transform: scale(1);   opacity: 1; }
+    100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* Botón "volver arriba" */
+.btn-arriba {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    z-index: 200;
+    width: 48px; height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--primario);
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.3s, transform var(--transicion), box-shadow 0.25s;
+}
+.btn-arriba.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.btn-arriba:hover { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(79, 70, 229, 0.25); }
+
+/* ---------- TARJETAS ---------- */
+.tarjeta, .paso, .stat {
+    transition: transform var(--transicion), box-shadow 0.3s ease, border-color 0.3s;
+}
+.tarjeta:hover, .stat:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+}
+.stat:hover { border-color: var(--primario); }
+.tarjeta:hover .tarjeta-icono { animation: saltito 0.6s ease; }
+.tarjeta-icono, .cita-icono { transition: transform 0.3s ease; }
+.paso:hover .paso-numero { transform: rotate(-10deg) scale(1.1); }
+.paso-numero { transition: transform var(--transicion); box-shadow: var(--sombra-boton); }
+
+@keyframes saltito {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    30%      { transform: translateY(-8px) rotate(-8deg); }
+    60%      { transform: translateY(0) rotate(6deg); }
+}
+
+/* Tarjetas que no deben moverse (formularios, filas) */
+.cita-fila:hover, .form-inline:hover { transform: translateY(-3px); }
+.form-caja { transition: box-shadow 0.3s; }
+
+/* ---------- HERO ---------- */
+.hero { position: relative; overflow: hidden; }
+.hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.45;
+    z-index: 0;
+    animation: flotar 8s ease-in-out infinite;
+}
+.hero::before { width: 320px; height: 320px; background: #a5b4fc; top: -80px; right: 10%; }
+.hero::after  { width: 260px; height: 260px; background: #c4b5fd; bottom: -100px; left: 5%; animation-delay: -4s; }
+.hero-contenido { position: relative; z-index: 1; }
+.hero-tarjeta { animation: flotar 5s ease-in-out infinite; }
+
+/* ---------- ALERTAS ---------- */
+.alerta {
+    position: relative;
+    padding-right: 40px;
+    animation: entrarAlerta 0.4s var(--transicion) both;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+.alerta.saliendo { animation: salirAlerta 0.35s ease forwards; }
+.alerta-cerrar {
+    position: absolute;
+    top: 50%; right: 12px;
+    transform: translateY(-50%);
+    background: none; border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+}
+.alerta-cerrar:hover { opacity: 1; }
+@keyframes entrarAlerta { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+@keyframes salirAlerta  { to   { opacity: 0; transform: translateY(-12px); height: 0; margin: 0; padding-top: 0; padding-bottom: 0; } }
+
+/* ---------- APARECER AL HACER SCROLL ---------- */
+.revelar {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.revelar.visible { opacity: 1; transform: none; }
+
+/* ---------- INPUTS ---------- */
+input, select, textarea { transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+input:focus, select:focus, textarea:focus { transform: translateY(-1px); }
+
+/* Foco visible con teclado */
+a:focus-visible, button:focus-visible {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+/* ---------- CELULAR ---------- */
+@media (max-width: 700px) {
+    .fab { right: 16px; bottom: 16px; padding: 14px 18px; }
+    .fab .fab-texto { display: none; }
+    .btn-arriba { left: 16px; bottom: 16px; }
+}
+
+/* Respetar a quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+    }
+    .revelar { opacity: 1; transform: none; }
+}
